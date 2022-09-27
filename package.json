@@ -1,0 +1,22 @@
+{
+  "name": "hotspot-backend",
+  "version": "1.0.0",
+  "description": "Backend for Hotspot application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CS307-Team-24/Hotspot-Backend.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/CS307-Team-24/Hotspot-Backend/issues"
+  },
+  "homepage": "https://github.com/CS307-Team-24/Hotspot-Backend#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
