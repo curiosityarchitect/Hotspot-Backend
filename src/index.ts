@@ -1,5 +1,9 @@
+import * as dotenv from 'dotenv'
+dotenv.config();
+
 import express from "express";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
+import eventsRouter from "./api-routes/events.routes"
 
 const app = express();
 const port = 8080; // default port to listen
@@ -9,13 +13,17 @@ app.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
 } );
 
-mongoose.connect(process.env.URI);
+mongoose.connect();
+
 const connection = mongoose.connection;
-connection.once("open", () => {
+connection.once('open', () => {
+    // tslint:disable-next-line:no-console
     console.log("mongodb connection established!");
 });
 
+app.use(eventsRouter);
+
 // start the Express server
 app.listen( port, () => {
-    // console.log( `server started at http://localhost:${ port }` ); // eslint-disable-line no-console
+    // console.log( `server started at http://localhost:${ port }` );
 } );

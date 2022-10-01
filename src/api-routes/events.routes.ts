@@ -1,7 +1,16 @@
-const router = require("express").Router();
-let events = require("../models/event");
+import { Router } from "express";
+import { Events } from "../models/events.model"
 
-router.route('/events').post((req, res) => {
-    events.create()
+const eventsRouter = Router();
+
+eventsRouter.route('/events').post(() => {
+    Events.create({name: "Evan's evant hahaha"});
 });
+
+eventsRouter.route('/events').get((req, res) => {
+    Events.find({})
+    .then(events => res.json(events));
+});
+
+export default eventsRouter;
 
