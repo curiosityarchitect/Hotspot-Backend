@@ -13,7 +13,7 @@ app.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
 } );
 
-mongoose.connect();
+mongoose.connect(process.env.MONGODB_URI);
 
 const connection = mongoose.connection;
 connection.once('open', () => {
