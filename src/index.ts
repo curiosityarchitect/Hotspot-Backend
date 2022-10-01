@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 
 const app = express();
 const port = 8080; // default port to listen
@@ -7,6 +8,12 @@ const port = 8080; // default port to listen
 app.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
 } );
+
+mongoose.connect(process.env.URI);
+const connection = mongoose.connection;
+connection.once("open", () => {
+    console.log("mongodb connection established!");
+});
 
 // start the Express server
 app.listen( port, () => {
