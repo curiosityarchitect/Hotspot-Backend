@@ -1,4 +1,4 @@
-import { Router, Request, Response, RequestHandler } from "express";
+import { Router, Request, Response } from "express";
 import { Events } from "../schema/events.model"
 import { validateEvent } from "../middleware/events.validator";
 import bodyParser from "body-parser";
@@ -11,7 +11,7 @@ eventsRouter.route('/events').post(validateEvent, (req: Request, res: Response) 
 
     newEvent.save()
     .then(event => res.json(event))
-    .catch(err => res.status(400).json("ERROR: event could not be added"));
+    .catch(err => res.status(400).json(err));
 });
 
 eventsRouter.route('/events').get((req: Request, res: Response) => {
