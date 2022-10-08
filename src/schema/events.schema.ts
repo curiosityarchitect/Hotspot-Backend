@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { Point } from "./point.model";
 
 const eventSchema = new Schema({
     name: {
@@ -7,9 +6,13 @@ const eventSchema = new Schema({
         required: true
     },
     location: {
-        type: Point,
-        required: true
-    }
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true
+        },
+        coordinates: [],
+    },
 });
 
 eventSchema.index({location: "2dsphere"});
