@@ -22,29 +22,34 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
 });
 
 eventsRouter.route('/events').get((req: Request, res: Response) => {
-    Events.find({})
-    .then(events => res.json(events))
-    .catch(err => res.status(400).json(err));
+    // if a location is defined in the query string, query database for events around that location
+    if (req.query.longitude && req.query.latitude) {
+        Events.find({
+            location: {
+                $near: {
+                // if a distance is defined in query string, query database for events in that distance
+                // defaults to a distance of 800 meters
+                $maxDistance: req.query.distance ? req.query.distance : 800,
+                $geometry: {
+                    type: "Point",
+                    coordinates: [req.query.longitude, req.query.latitude]
+                    }
+                }
+            }
+        })
+        .then(event => res.json(event))
+        .catch(err => res.status(400).json(err));
+    }
+    // otherwise, fetch all events
+    else {
+        Events.find()
+        .then(events => res.json(events))
+        .catch(err => res.status(400).json(err));
+    }
 });
 
 eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
     Events.findById(req.params.eventid)
-    .then(event => res.json(event))
-    .catch(err => res.status(400).json(err));
-});
-
-eventsRouter.route('/events/:longitude/:latitude').get((req: Request, res: Response) => {
-    Events.find({
-        location: {
-            $near: {
-            $maxDistance: 200,
-            $geometry: {
-                type: "Point",
-                coordinates: [req.params.longitude, req.params.latitude]
-                }
-            }
-        }
-    })
     .then(event => res.json(event))
     .catch(err => res.status(400).json(err));
 });
