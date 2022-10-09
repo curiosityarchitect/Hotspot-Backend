@@ -55,4 +55,3 @@ eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
 });
 
 export default eventsRouter;
-

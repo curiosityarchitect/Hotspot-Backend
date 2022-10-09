@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import mongoose, { mongo } from "mongoose";
 import eventsRouter from "./api-routes/events.routes"
+import userRouter from './api-routes/users.routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -22,6 +23,7 @@ connection.once('open', () => {
 });
 
 app.use(eventsRouter);
+app.use(userRouter);
 
 // start the Express server
 app.listen( port, () => {
