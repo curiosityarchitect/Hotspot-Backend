@@ -11,7 +11,7 @@ const port = 8080; // default port to listen
 // define a route handler for the default home page
 app.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
-} );
+});
 
 mongoose.connect("mongodb+srv://wangej:VxibwpanTBdbOKvS@cluster0.uclzqdl.mongodb.net/?");
 
