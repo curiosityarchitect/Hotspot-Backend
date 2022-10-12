@@ -6,7 +6,7 @@ const friendRequestSchema = new Schema({
         required: true,
         minlength: 3
     },
-    deliver: {
+    deliverer: {
         type: String,
         required: true,
         minlength: 3

@@ -5,6 +5,7 @@ const eventSchema = new Schema({
         type: String,
         required: true
     },
+    eventType: String,
     location: {
         type: {
             type: String,
@@ -13,6 +14,8 @@ const eventSchema = new Schema({
         },
         coordinates: [],
     },
+    startDate: Date,
+    endDate: Date
 });
 
 eventSchema.index({location: "2dsphere"});

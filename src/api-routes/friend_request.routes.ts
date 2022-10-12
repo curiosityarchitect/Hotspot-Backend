@@ -5,8 +5,7 @@ import { User } from "../schema/user.schema"
 
 const fr_reqRouter: Router = Router();
 
-fr_reqRouter.route('/send').post((req: Request, res: Response) => {
-
+fr_reqRouter.route('/friend-requests').post((req: Request, res: Response) => {
     const reciever = req.body.reciever;
     const deliver = req.body.deliver;
     const newRequest = new friendRequest ({
@@ -15,12 +14,14 @@ fr_reqRouter.route('/send').post((req: Request, res: Response) => {
     });
     //How to make the if statement. If there will be no users found, I would not make the newRequest.save
     User.find({username: reciever})
-    .then(() => res.json('Request has been sent!'))
+    .then(() => {
+        newRequest.save();
+        res.json('Request has been sent!');
+    })
     .catch(err => res.status(400).json("Error: No users found"));
-    newRequest.save()
 });
 
-fr_reqRouter.route('/check').get((req: Request, res: Response) => {
+fr_reqRouter.route('/friend-requests').get((req: Request, res: Response) => {
     const username = req.body.username;
     friendRequest.find({reciever: username})
     .then(fr_req => res.json(fr_req))
