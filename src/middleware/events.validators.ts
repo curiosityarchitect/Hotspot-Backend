@@ -1,7 +1,8 @@
-var validate = require('mongoose-validator');
+/* tslint:disable-next-line:no-var-requires */
+let validate = require('mongoose-validator');
 
-//validators for schema IN MONGOOSE - in order of schema structure
-var nameValidator = [
+// validators for schema IN MONGOOSE - in order of schema structure
+let nameValidator = [
     validate({
       validator: 'isLength',
       arguments: [0, 20],
@@ -10,7 +11,7 @@ var nameValidator = [
     })
 ];
 
-var descValidator = [
+let descValidator = [
     validate({
       validator: 'isLength',
       arguments: [0, 100],
@@ -19,7 +20,7 @@ var descValidator = [
     })
 ];
 
-var locationValidator = [
+let locationValidator = [
     validate({
         validator: 'isIn',
         arguments: ['Point'],
@@ -28,11 +29,11 @@ var locationValidator = [
     })
 ];
 
-function coordinateValidation(value: Array<number>) {
+function coordinateValidation(value: number[]) {
    return value.length = 2
 }
 
-var creatorValidator = [
+let creatorValidator = [
     validate({
         validator: 'isLength',
         arguments: [0, 12],
@@ -41,7 +42,7 @@ var creatorValidator = [
     })
 ]
 
-var createDateValidator = [
+let createDateValidator = [
     validate({
         validator: 'isDate',
         passIfEmpty: false,
@@ -49,7 +50,7 @@ var createDateValidator = [
     })
 ]
 
-var eventScopeValidator = [
+let eventScopeValidator = [
     validate({
         validator: 'isIn',
         arguments: ['public', 'private'],
@@ -58,7 +59,7 @@ var eventScopeValidator = [
     })
 ]
 
-var groupEventValidator = [
+let groupEventValidator = [
     validate({
         validator: 'isBoolean',
         passIfEmpty: false,
@@ -66,7 +67,7 @@ var groupEventValidator = [
     })
 ]
 
-var capacityValidator = [  
+let capacityValidator = [
     validate({
         validator: 'isInt',
         passIfEmpty: true,
@@ -75,5 +76,5 @@ var capacityValidator = [
 ]
 
 function expirationValidator(date: Date) {
-    return  date  >=  new Date() //expiration date must be in the future
+    return  date  >=  new Date() // expiration date must be in the future
 }
