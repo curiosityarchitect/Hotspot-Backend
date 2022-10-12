@@ -18,8 +18,6 @@ userRouter.route('/users').get((req: Request, res: Response) => {
         .lean() // returns a json not a document
         .then(users => {
             starts = users;
-            // tslint:disable-next-line:no-console
-            console.log(starts);
 
             // creates array of user IDs that have already been found
             const alreadyFound: mongoose.Types.ObjectId[] = users.map(user => user._id);
@@ -34,12 +32,8 @@ userRouter.route('/users').get((req: Request, res: Response) => {
         })
         .then(users => {
             contains = users;
-            // tslint:disable-next-line:no-console
-            console.log(contains);
 
             const result = starts.concat(contains);
-            // tslint:disable-next-line:no-console
-            console.log(result);
             res.json(result);
         })
         .catch(err => res.status(400).json("Error: No users found"));
