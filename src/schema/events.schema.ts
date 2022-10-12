@@ -4,51 +4,51 @@ import mongoose, { Schema } from "mongoose";
 const eventSchema = new Schema({
     name: {
         type: String,
-        //validate: nameValidator,
+        // validate: nameValidator,
     },
     description: {
          type: String,
-         //validate: descValidator,
+         // validate: descValidator,
     },
     location: {
          // find way to pull coordinates from google maps to string format of location
          loc: {
             type: String,
             enum: ["Point"], // extend functionality of app later? (loc types) -> 'popular', 'favorite', etc.
-            //validate: locationValidator
+            // validate: locationValidator
         },
         coordinates: {
             type: [],
             required: true, // validate is internally done here
-            //validate: [coordinateValidation,'coordinates should be numbers as: latitude, longitude'],
+            // validate: [coordinateValidation,'coordinates should be numbers as: latitude, longitude'],
         }
     },
     creator: {
-        username: {String, validate: creatorValidator},
+        username: {String, /*validate: creatorValidator*/},
         dateCreated:{
             type: Date,
-            //validate: createDateValidator,
+            // validate: createDateValidator,
         },
     },
     eventType: {
         scope: {
             type: String,
             enum: ["public", "private"],
-            //validate: eventScopeValidator,
+            // validate: eventScopeValidator,
         },
         groupEvent: {
             type: Boolean,
             default: false,
-            //validate: groupEventValidator,
+            // validate: groupEventValidator,
         }
     },
     capacity: {
         type: Number,
-        //validate: capacityValidator,
+        // validate: capacityValidator,
     },
     expiration: {
         type: Date,
-        //validate: [expirationValidator, 'Expiration date must be in the future'],
+        // validate: [expirationValidator, 'Expiration date must be in the future'],
     }
 
 });
