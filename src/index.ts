@@ -23,13 +23,18 @@ connection.once('open', () => {
     console.log("mongodb connection established!");
 });
 
-const allowedOrigins = ["*"];
+const allowedOrigins = ["http:://localhost:19006"];
 
 const options: cors.CorsOptions = {
     origin: allowedOrigins
 }
 
 app.use(cors(options));
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.use(eventsRouter);
 app.use(userRouter);
