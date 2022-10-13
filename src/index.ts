@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 dotenv.config();
 
+import cors from "cors";
 import express from "express";
 import mongoose, { mongo } from "mongoose";
 import eventsRouter from "./api-routes/events.routes"
@@ -21,6 +22,14 @@ connection.once('open', () => {
     // tslint:disable-next-line:no-console
     console.log("mongodb connection established!");
 });
+
+const allowedOrigins = ["*"];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+}
+
+app.use(cors(options));
 
 app.use(eventsRouter);
 app.use(userRouter);
