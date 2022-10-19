@@ -11,17 +11,12 @@ const eventSchema = new Schema({
          // validate: descValidator,
     },
     location: {
-         // find way to pull coordinates from google maps to string format of location
-         loc: {
+        type: {
             type: String,
-            enum: ["Point"], // extend functionality of app later? (loc types) -> 'popular', 'favorite', etc.
-            // validate: locationValidator
+            enum: ["Point"],
+            required: true
         },
-        coordinates: {
-            type: [],
-            required: true, // validate is internally done here
-            // validate: [coordinateValidation,'coordinates should be numbers as: latitude, longitude'],
-        }
+        coordinates: [],
     },
     creator: {
         username: {String, /*validate: creatorValidator*/},
