@@ -13,6 +13,9 @@ const eventSchema = new Schema({
         },
         coordinates: [],
     },
+    numAttendees: {
+        type: Number
+    }
 });
 
 eventSchema.index({location: "2dsphere"});

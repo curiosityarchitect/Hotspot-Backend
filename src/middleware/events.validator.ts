@@ -2,17 +2,15 @@ import { body, CustomValidator, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
 const checkLongitude: CustomValidator = (longitude: number) => {
-    if (longitude < -180 || longitude > 180)
-        return false;
-
-    return true;
+    return !(longitude < -180 || longitude > 180)
 };
 
 const checkLatitude: CustomValidator = (latitude: number) => {
-    if (latitude < -90 || latitude > 90)
-        return false;
+    return !(latitude < -90 || latitude > 90);
+};
 
-    return true;
+const checkPositive: CustomValidator = (num: number) => {
+    return num >= 0;
 };
 
 export const validateEventPost = [
@@ -35,6 +33,11 @@ export const validateEventPost = [
         .bail()
         .custom(checkLatitude)
         .withMessage("Latitude must be between -90 and 90, inclusive!")
+    ,
+    body("numAttendees")
+        .isNumeric()
+        .withMessage("Number of attendees must be a number!")
+        .custom(checkPositive)
     ,
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
