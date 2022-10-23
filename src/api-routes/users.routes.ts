@@ -46,10 +46,12 @@ userRouter.route('/users').get((req: Request, res: Response) => {
 
 userRouter.route('/users').post((req: Request, res: Response) => {
     const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
 
     const newUser = new User({
         username,
+        email,
         password
     });
     newUser.save()
