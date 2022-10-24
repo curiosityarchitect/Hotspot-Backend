@@ -10,7 +10,7 @@ eventTagsRouter.route('/tags').post((req: Request, res: Response) => {
     const name = req.body.name;
     const id = req.body.id;
     Tag.find({
-        name: name
+        name
     })
     .then()
     .catch(err => res.status(400).json("ERROR: tag could not be found"));
