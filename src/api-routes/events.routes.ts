@@ -13,7 +13,8 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
         location: {
             type: "Point",
             coordinates: [req.body.longitude, req.body.latitude]
-        }
+        },
+        numAttendees: req.body.numAttendees
     });
 
     newEvent.save()
