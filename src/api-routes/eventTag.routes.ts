@@ -15,7 +15,6 @@ eventTagsRouter.route('/events/:eventid/tags').post((req: Request, res: Response
     Tag.findOne({
         description
     })
-    .catch(err => res.status(400).json(err))
     .then((tag) => {
         if (!tag) {
             const newTag = new Tag(
@@ -26,30 +25,40 @@ eventTagsRouter.route('/events/:eventid/tags').post((req: Request, res: Response
         }
         return null;
     })
-    .catch(err => res.status(400).json(err))
 
     // check eventid exists
     .then(() => {
         return Events.findById(eventid);
     })
-    .catch(err => res.status(400).json(err))
     .then((event) => {
-        if (event == null)
+        if (event == null) {
             throw new Error("no event with specified eventid");
-        
-            return null;
+        }
+        return null;
     })
 
-    // create new event tag if needed
-    .catch(err => res.status(400).json(err))
+    // check if event tag already exists
     .then(() => {
-        const newEventTag = new EventTag({
+        return EventTag.findOne({
             description,
             eventid
         });
-        return newEventTag.save();
+    })
+
+    // create new event tag document if needed
+    .then((tag) => {
+        if (!tag) {
+            const newEventTag = new EventTag({
+                description,
+                eventid
+            });
+            return newEventTag.save();
+        }
+        return tag;
     })
     .then((tag) => res.json(tag))
+
+    // error handler for chain
     .catch(err => res.status(400).json(err));
 });
 
