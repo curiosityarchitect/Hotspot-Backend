@@ -2,7 +2,7 @@ import mongoose, { Schema, ObjectId } from "mongoose";
 
 const notificationSchema = new Schema({
     recepient: {
-        type: mongoose.Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
