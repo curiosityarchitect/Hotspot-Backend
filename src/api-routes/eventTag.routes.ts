@@ -62,4 +62,14 @@ eventTagsRouter.route('/events/:eventid/tags').post((req: Request, res: Response
     .catch(err => res.status(400).json(err));
 });
 
+eventTagsRouter.route('/events/:eventid/tags').get((req: Request, res: Response) => {
+    const eventid = req.params.eventid;
+
+    EventTag.find({
+        eventid
+    })
+    .then((tags) => res.json(tags))
+    .catch(err => res.status(400).json(err));
+});
+
 export default eventTagsRouter;
