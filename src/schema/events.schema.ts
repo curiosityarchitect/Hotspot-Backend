@@ -18,6 +18,8 @@ const eventSchema = new Schema({
         },
         coordinates: [],
     },
+    startDate: Date,
+    endDate: Date,
     creator: {
         username: {String, /*validate: creatorValidator*/},
         dateCreated:{
