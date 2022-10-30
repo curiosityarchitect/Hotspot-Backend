@@ -9,7 +9,7 @@ userRouter.route('/users').get((req: Request, res: Response) => {
         let starts: object[] = [];
         let contains: object[] = [];
         const startRegex = `^(${req.query.search}).*`;
-        const containsRegex = `.*(${req.query.search}).*`;
+        const containsRegex = `.+(${req.query.search}).*`;
         User.find({
             username: {
                 $regex : startRegex
@@ -18,15 +18,9 @@ userRouter.route('/users').get((req: Request, res: Response) => {
         .lean() // returns a json not a document
         .then(users => {
             starts = users;
-
-            // creates array of user IDs that have already been found
-            const alreadyFound: mongoose.Types.ObjectId[] = users.map(user => user._id);
             return User.find({
                 username: {
                     $regex : containsRegex
-                },
-                _id: {
-                    $nin : alreadyFound
                 }
             }).lean();
         })

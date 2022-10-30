@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Events } from "../schema/events.schema"
+import { Tag } from "../schema/tags.schema";
+import { EventTag } from "../schema/eventTags.schema";
 import { validateEventPost } from "../middleware/events.validator";
 import bodyParser from "body-parser";
 
@@ -7,17 +9,63 @@ const eventsRouter: Router = Router();
 eventsRouter.use(bodyParser.json());
 
 eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Response) => {
+    const name = req.body.name;
+    const longitude = req.body.longitude;
+    const latitude = req.body.latitude;
+    const tags: string[] = req.body.tags;
+
     const newEvent = new Events(
     {
-        name: req.body.name,
+        name,
         location: {
             type: "Point",
-            coordinates: [req.body.longitude, req.body.latitude]
-        }
+            coordinates: [longitude, latitude]
+        },
+        numAttendees: req.body.numAttendees
     });
 
     newEvent.save()
-    .then(event => res.json(event))
+
+    .then(event => {
+        // simply respond with event document if no tags need to be added
+        if (!tags) {
+            res.json(event);
+            return;
+        }
+
+        const eventid = event._id;
+
+        // send series of queries to create necessary tags
+        return Promise.all(tags.map((tag) => {
+            return Tag.findOne({
+                description: tag
+            })
+            .then((tagDoc) => {
+                if (!tagDoc) {
+                    const newTag = new Tag({
+                            description: tag
+                        });
+                    return newTag.save();
+                }
+                return null;
+            })
+
+            // create new event tag document
+            .then(() => {
+                const newEventTag = new EventTag({
+                    description: tag,
+                    eventid
+                });
+                return newEventTag.save();
+            })
+        }))
+        // after all tags have been added, return the event object
+        .then(() => {
+            res.json(event);
+        })
+    })
+
+    // error catcher for promise chain
     .catch(err => res.status(400).json(err));
 });
 

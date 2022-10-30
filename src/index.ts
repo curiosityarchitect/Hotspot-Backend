@@ -1,10 +1,12 @@
 import * as dotenv from 'dotenv'
 dotenv.config();
 
+import cors from "cors";
 import express from "express";
 import mongoose, { mongo } from "mongoose";
 import eventsRouter from "./api-routes/events.routes"
 import userRouter from './api-routes/users.routes';
+import eventTagsRouter from './api-routes/eventTag.routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -22,8 +24,22 @@ connection.once('open', () => {
     console.log("mongodb connection established!");
 });
 
+const allowedOrigins = ["http:://localhost:19006"];
+
+const options: cors.CorsOptions = {
+    origin: allowedOrigins
+}
+
+app.use(cors(options));
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 app.use(eventsRouter);
 app.use(userRouter);
+app.use(eventTagsRouter);
 
 // start the Express server
 app.listen( port, () => {
