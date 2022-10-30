@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
-const tagsSchema = new Schema({
-    name: {
+const tagSchema = new Schema({
+    description: {
         type: String,
         required: true,
         minlength: 3
     }
 });
 
-export const Tag = mongoose.model("Tag", tagsSchema);
+export const Tag = mongoose.model("Tag", tagSchema);

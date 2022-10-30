@@ -1,4 +1,4 @@
-import mongoose, { Schema, ObjectId } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const notificationSchema = new Schema({
     recepient: {
