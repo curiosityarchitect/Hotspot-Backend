@@ -36,8 +36,8 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
         const eventid = event._id;
 
         // send series of queries to create necessary tags
-        return Promise.all(tags.map((tag) => {
-            return Tag.findOne({
+        return Promise.all(tags.map((tag) =>
+            Tag.findOne({
                 description: tag
             })
             .then((tagDoc) => {
@@ -58,7 +58,7 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
                 });
                 return newEventTag.save();
             })
-        }))
+        ))
         // after all tags have been added, return the event object
         .then(() => {
             res.json(event);
