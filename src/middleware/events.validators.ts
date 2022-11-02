@@ -15,7 +15,7 @@ let descValidator = [
     validate({
       validator: 'isLength',
       arguments: [0, 100],
-      passIfEmpty: true,
+      passIfEmpty: false,
       message: 'Event description should be less than 100 characters',
     })
 ];
@@ -45,7 +45,7 @@ let creatorValidator = [
 let createDateValidator = [
     validate({
         validator: 'isDate',
-        passIfEmpty: false,
+        passIfEmpty: true,
         message: 'Enter valid date',
     })
 ]
@@ -54,7 +54,7 @@ let eventScopeValidator = [
     validate({
         validator: 'isIn',
         arguments: ['public', 'private'],
-        passIfEmpty: false,
+        passIfEmpty: true,
         message: 'Event scope must be public or private',
     })
 ]
@@ -62,7 +62,7 @@ let eventScopeValidator = [
 let groupEventValidator = [
     validate({
         validator: 'isBoolean',
-        passIfEmpty: false,
+        passIfEmpty: true,
         message: 'Event must be group or not',
     })
 ]

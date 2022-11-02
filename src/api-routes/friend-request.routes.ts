@@ -7,10 +7,10 @@ const friendRequestRouter: Router = Router();
 
 friendRequestRouter.route('/friend-requests').post((req: Request, res: Response) => {
     const reciever = req.body.reciever;
-    const deliver = req.body.deliver;
+    const deliverer = req.body.deliverer;
     const newRequest = new friendRequest ({
         reciever,
-        deliver
+        deliverer
     });
     // How to make the if statement. If there will be no users found, I would not make the newRequest.save
     User.find({username: reciever})

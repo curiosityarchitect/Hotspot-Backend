@@ -7,6 +7,8 @@ import mongoose, { mongo } from "mongoose";
 import eventsRouter from "./api-routes/events.routes"
 import userRouter from './api-routes/users.routes';
 import eventTagsRouter from './api-routes/eventTag.routes';
+import friendRequestRouter from './api-routes/friend-request.routes';
+import RsvpRouter from './api-routes/eventsRSVP.routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -40,6 +42,8 @@ app.use((req, res, next) => {
 app.use(eventsRouter);
 app.use(userRouter);
 app.use(eventTagsRouter);
+app.use(friendRequestRouter);
+app.use(RsvpRouter);
 
 // start the Express server
 app.listen( port, () => {
