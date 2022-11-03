@@ -9,6 +9,8 @@ import userRouter from './api-routes/users.routes';
 import eventTagsRouter from './api-routes/eventTag.routes';
 import friendRequestRouter from './api-routes/friend-request.routes';
 import RsvpRouter from './api-routes/eventsRSVP.routes';
+import profileRouter from './api-routes/profile.routes';
+import profileTagsRouter from './api-routes/profileTag.routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -44,6 +46,8 @@ app.use(userRouter);
 app.use(eventTagsRouter);
 app.use(friendRequestRouter);
 app.use(RsvpRouter);
+app.use(profileRouter)
+app.use(profileTagsRouter);
 
 // start the Express server
 app.listen( port, () => {
