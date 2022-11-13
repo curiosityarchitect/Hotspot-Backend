@@ -1,5 +1,5 @@
 import { Router, Request, Response, RequestHandler } from "express";
-import { friendRequest } from "../schema/friend_request.schema"
+import { friendRequest } from "../schema/friend-request.schema"
 import { User } from "../schema/user.schema"
 
 
