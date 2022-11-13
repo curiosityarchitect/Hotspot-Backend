@@ -34,7 +34,22 @@ userRouter.route('/users/:userId').get((req: Request, res: Response) => {
 });
 
 userRouter.route('/users/:userId/location').put((req: Request, res: Response) => {
-    
+    const longitude = req.body.longitude;
+    const latitude = req.body.latitude;
+
+    User.findOneAndUpdate(
+        {_id: req.params.userId},
+        {
+            location: {
+                type: "Point",
+                coordinates: [longitude, latitude]
+            }
+        }
+    )
+    .then((user) => {
+        res.json(user)
+    })
+    .catch((err) => res.status(400).json(err));
 });
 
 export default userRouter;
