@@ -65,6 +65,7 @@ userRouter.route('/users/:userId').get((req: Request, res: Response) => {
 userRouter.route('/users/:userId/location').put((req: Request, res: Response) => {
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
+    let errStatus = 400;
 
     User.findOneAndUpdate(
         {_id: req.params.userId},
@@ -76,9 +77,13 @@ userRouter.route('/users/:userId/location').put((req: Request, res: Response) =>
         }
     )
     .then((user) => {
+        if (!user) {
+            errStatus = 404;
+            throw new Error(`no user with _id ${req.params.userId}`);
+        }
         res.json(user)
     })
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => res.status(errStatus).json(err));
 });
 
 export default userRouter;
