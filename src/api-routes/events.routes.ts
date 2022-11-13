@@ -13,6 +13,7 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
     const tags: string[] = req.body.tags;
+    const scope: string = req.body.scope;
 
     const newEvent = new Events(
     {
@@ -21,7 +22,10 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
             type: "Point",
             coordinates: [longitude, latitude]
         },
-        numAttendees: req.body.numAttendees
+        numAttendees: req.body.numAttendees,
+        eventType: {
+            scope
+        } 
     });
 
     newEvent.save()
@@ -83,6 +87,9 @@ eventsRouter.route('/events').get((req: Request, res: Response) => {
                     coordinates: [req.query.longitude, req.query.latitude]
                     }
                 }
+            },
+            eventType: {
+                scope: "public"
             }
         })
         .then(event => res.json(event))
