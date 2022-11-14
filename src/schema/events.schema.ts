@@ -6,6 +6,9 @@ const eventSchema = new Schema({
         type: String,
         // validate: nameValidator,
     },
+    address: {
+        type: String,
+    },
     description: {
          type: String,
          // validate: descValidator,
@@ -21,7 +24,10 @@ const eventSchema = new Schema({
     startDate: Date,
     endDate: Date,
     creator: {
-        username: {String, /*validate: creatorValidator*/},
+        username: {
+            type: String,
+            /*validate: creatorValidator*/
+        },
         dateCreated:{
             type: Date,
             // validate: createDateValidator,
@@ -49,6 +55,9 @@ const eventSchema = new Schema({
     expiration: {
         type: Date,
         // validate: [expirationValidator, 'Expiration date must be in the future'],
+    },
+    cover:{
+        type: String,
     }
 });
 
