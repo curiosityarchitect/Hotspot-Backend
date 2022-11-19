@@ -15,11 +15,12 @@ tagsRouter.route('/tags').post((req: Request, res: Response) => {
     .catch(err => res.status(400).json("ERROR: tag could not be added"));
 });
 
+
 tagsRouter.route('/tags').get((req: Request, res: Response) => {
     if (req.query.search) {
         const containsRegex = `.*(${req.query.search}).*`;
         Tag.find({
-            name: {
+            description: {
                 $regex : containsRegex
             }
         })
@@ -31,5 +32,8 @@ tagsRouter.route('/tags').get((req: Request, res: Response) => {
         .catch(err => res.status(400).json("Error: No tags found"));
     }
 });
+
+
+
 
 export default tagsRouter;

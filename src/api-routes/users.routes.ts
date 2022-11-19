@@ -41,19 +41,33 @@ userRouter.route('/users').get((req: Request, res: Response) => {
 userRouter.route('/users').post((req: Request, res: Response) => {
     const username = req.body.username;
     const password = req.body.password;
+    const email = req.body.email;
 
     const newUser = new User({
         username,
-        password
+        password,
+        email,
     });
     newUser.save()
     .then(() => res.json('User added'))
     .catch(err => res.status(400).json("ERROR: user could not be added"));
 });
 
-userRouter.route('/users/:userId').get((req: Request, res: Response) => {
+ userRouter.route('/users/:userId').get((req: Request, res: Response) => {
     User.findById(req.params.userId)
     .then(user => res.json(user))
+    .catch(err => res.status(400).json(err));
+});
+
+
+userRouter.route('/users/username/:username').get((req: Request, res: Response) => {
+    const username = req.params.username
+    User.find({
+       username
+    })
+    .then(
+        user => res.json(user)
+    )
     .catch(err => res.status(400).json(err));
 });
 

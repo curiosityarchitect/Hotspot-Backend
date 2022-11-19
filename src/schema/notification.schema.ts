@@ -2,15 +2,17 @@ import mongoose, { Schema } from "mongoose";
 
 const notificationSchema = new Schema({
     recepient: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
-    description: {
+    message: {
         type: String,
-        minLength: 5,
-        requied: true
-    }
+        required: true
+    },
+    type: {
+        type: String,
+        required: false
+    },
 });
 
 
