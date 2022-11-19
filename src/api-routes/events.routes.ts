@@ -40,16 +40,6 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
 
             const eventid = event._id;
 
-            if(invitees){
-                invitees.forEach((invitee) => {
-                    const newNotification = new Notifications({
-                        recepient: invitee,
-                        message: `${req.body.username} invited you to ${req.body.name}!`,
-                        type: "event",
-                    });
-                    newNotification.save();
-                });
-            }
             // send series of queries to create necessary tags
             return Promise.all(tags.map((tag) =>
                 Tag.findOne({
@@ -80,6 +70,22 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
                 res.json(event);
             })
 
+        })
+
+        // send series of queries to send notifications
+        .then(() => {
+            if(!invitees) {
+                return null;
+            }
+
+            return Promise.all(invitees.map((invitee) => {
+                const newNotification = new Notifications({
+                    recepient: invitee,
+                    message: `${req.body.username} invited you to ${req.body.name}!`,
+                    type: "event",
+                });
+                return newNotification.save();
+            }));
         })
 
         // error catcher for promise chain
