@@ -37,6 +37,7 @@ const eventSchema = new Schema({
         scope: {
             type: String,
             enum: ["public", "private"],
+            default: "public"
             // validate: eventScopeValidator,
         },
         groupEvent: {
