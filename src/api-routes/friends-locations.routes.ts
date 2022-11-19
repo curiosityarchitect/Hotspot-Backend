@@ -7,7 +7,7 @@ import { friends as Friends } from "../schema/friends.schema";
 const friendLocationRouter: Router = Router();
 friendLocationRouter.use(bodyParser.json());
 
-friendLocationRouter.route('/users/:userId/friends/location').get((req: Request, res: Response) => {
+friendLocationRouter.route('/users/:userId/friends/locations').get((req: Request, res: Response) => {
     let errStatus = 400;
     let username: string;
 
@@ -36,6 +36,8 @@ friendLocationRouter.route('/users/:userId/friends/location').get((req: Request,
         User.find({ username: { $in: friendUsernames }})
         .select(['_id', 'username', 'location'])
     )
+
+    // send response
     .then((locationData) => {
         res.json(locationData)
     })
