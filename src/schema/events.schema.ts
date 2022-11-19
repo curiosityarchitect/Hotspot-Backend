@@ -58,7 +58,12 @@ const eventSchema = new Schema({
     },
     cover:{
         type: String,
-    }
+    },
+    invitees: {
+        type: [String],
+        // validate: inviteesValidator need to create - must be userID
+    },
+
 });
 
 eventSchema.index({location: "2dsphere"});

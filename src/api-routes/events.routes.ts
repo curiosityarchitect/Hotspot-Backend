@@ -1,12 +1,17 @@
 import { Router, Request, Response } from "express";
 import { Events } from "../schema/events.schema"
 import { validateEventPost } from "../middleware/events.validator";
+import {Tag} from "../schema/tags.schema";
+import {EventTag} from "../schema/eventTags.schema";
 import bodyParser from "body-parser";
+import { Notifications } from "../schema/notification.schema";
 
 const eventsRouter: Router = Router();
 eventsRouter.use(bodyParser.json());
 
 eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Response) => {
+    const tags: string[] = req.body.tags;
+    const invitees: string[] = req.body.invitees;
     const newEvent = new Events(
         {
             name: req.body.name,
@@ -25,11 +30,61 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
             endDate: req.body.endDate,
             cover: req.body.cover,
         });
+        newEvent.save()
+        .then(event => {
+            // simply respond with event document if no tags need to be added
+            if (!tags ) {
+                res.json(event);
+                return;
+            }
 
-    newEvent.save()
-        .then(event => res.json(event))
+            const eventid = event._id;
+
+            if(invitees){
+                invitees.forEach((invitee) => {
+                    const newNotification = new Notifications({
+                        recepient: invitee,
+                        message: `${req.body.username} invited you to ${req.body.name}!`,
+                        type: "event",
+                    });
+                    newNotification.save();
+                });
+            }
+            // send series of queries to create necessary tags
+            return Promise.all(tags.map((tag) =>
+                Tag.findOne({
+                    description: tag
+                })
+                .then((tagDoc) => {
+                    if (!tagDoc) {
+                        const newTag = new Tag({
+                                description: tag
+                            });
+                        return newTag.save();
+                    }
+                    return null;
+                })
+
+                // create new event tag document
+                .then(() => {
+                    const newEventTag = new EventTag({
+                        description: tag,
+                        eventid
+                    });
+                    return newEventTag.save();
+                })
+            ))
+
+            // after all tags have been added, return the event object
+            .then(() => {
+                res.json(event);
+            })
+
+        })
+
+        // error catcher for promise chain
         .catch(err => res.status(400).json(err));
-});
+    });
 
 eventsRouter.route('/events').get((req: Request, res: Response) => {
     // if a location is defined in the query string, query database for events around that location

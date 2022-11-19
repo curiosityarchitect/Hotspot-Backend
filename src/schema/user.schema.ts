@@ -27,6 +27,11 @@ const userSchema = new Schema({
             type: [Number],
             default: []
         }
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
     }
 }, {
     timestamps: true,

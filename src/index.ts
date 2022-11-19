@@ -12,6 +12,7 @@ import RsvpRouter from './api-routes/eventsRSVP.routes';
 import profileRouter from './api-routes/profile.routes';
 import profileTagsRouter from './api-routes/profileTag.routes';
 import friendLocationRouter from './api-routes/friends-locations.routes';
+import notificationRouter from './api-routes/notifications.routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -50,6 +51,8 @@ app.use(RsvpRouter);
 app.use(profileRouter)
 app.use(profileTagsRouter);
 app.use(friendLocationRouter);
+app.use(notificationRouter);
+
 
 // start the Express server
 app.listen( port, () => {
