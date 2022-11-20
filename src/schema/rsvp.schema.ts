@@ -10,7 +10,6 @@ const attendeesSchema = new Schema({
     },
     numAttendees : { type: Number, required: true },
 
-
 });
 
-export const Attendees = mongoose.model("Atendees", attendeesSchema);
+export const Attendees = mongoose.model("Attendees", attendeesSchema);

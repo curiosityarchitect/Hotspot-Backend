@@ -13,27 +13,26 @@ RsvpRouter.route('/events/:eventid/attendees').post((req: Request, res: Response
             username: req.body.username,
             eventid: req.params.eventid,
             numAttendees: req.body.numAttendees,
+        }
+    );
 
-        });
-         newAttendee.save()
-        .then(rsvp => res.json(rsvp))
-        .then(() => {
-            const newNumAttendees = req.body.numAttendees + 1;
-            if (req.params.numAttendees < req.params.capacity){
-                return Events.findOneAndUpdate({ _id: req.params.eventid }, { $set: { numAttendees: newNumAttendees } }, { new: true })
-            }
-            else {
-                throw new Error("Event is at max capacity");
-            }
-        })
-        .catch(err => res.status(400).json(err));
-
-
+    newAttendee.save()
+    .then(rsvp => res.json(rsvp))
+    .then(() => {
+        const newNumAttendees = req.body.numAttendees + 1;
+        if (req.params.numAttendees < req.params.capacity){
+            return Events.findOneAndUpdate({ _id: req.params.eventid }, { $set: { numAttendees: newNumAttendees } }, { new: true })
+        }
+        else {
+            throw new Error("Event is at max capacity");
+        }
+    })
+    .catch(err => res.status(400).json(err));
 });
 
 RsvpRouter.route('/events/:eventid/attendees').get((req: Request, res: Response) => {
     const eventid = req.params.eventid;
-    Attendees.find({ eventid, username: 'alexwu' })
+    Attendees.find({ eventid })
         .then((rsvp) => res.json(rsvp))
         .catch(err => res.status(400).json(err));
 
