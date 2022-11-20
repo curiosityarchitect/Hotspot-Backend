@@ -34,17 +34,9 @@ const eventSchema = new Schema({
         },
     },
     eventType: {
-        scope: {
-            type: String,
-            enum: ["public", "private"],
-            default: "public"
-            // validate: eventScopeValidator,
-        },
-        groupEvent: {
-            type: Boolean,
-            default: false,
-            // validate: groupEventValidator,
-        }
+        type: String,
+        enum: ["public", "private"],
+        default: "public"
     },
     numAttendees: {
         type: Number

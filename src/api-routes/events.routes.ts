@@ -101,17 +101,18 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
 eventsRouter.route('/events').get((req: Request, res: Response) => {
     // if a userid is provided, then query database only for events that user should have access to
     if (req.query.userid) {
-        const userid = req.query.userid;
-        let username: string;
 
         // extract username
-        User.findById(userid)
+        User.findById(req.query.userid)
         .then((user) => {
-            username = user.username;
+            if (!user) {
+                throw new Error();
+            }
+            return user.username;
         })
 
         // gather eventids the user should have specific access to
-        .then(() =>
+        .then((username) =>
             Promise.all([
                 // query for events the user is attending
                 Attendees.find({'username': username})
@@ -127,10 +128,21 @@ eventsRouter.route('/events').get((req: Request, res: Response) => {
             ])
         )
 
-        .then((eventids) => {
-            const privilegedEvents = [].concat(...eventids);
+        .then((groupedIds) =>
+            Events.find({
+                $or: [
+                    { 'eventType': 'public' },
+                    { '_id': { $in: groupedIds.flat() }}
+                ]
+            })
+        )
 
-            res.json(privilegedEvents);
+        .then((events) => {
+            res.json(events);
+        })
+
+        .catch((err) => {
+            res.status(400).json(err);
         })
 
     }
