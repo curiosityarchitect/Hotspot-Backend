@@ -6,6 +6,9 @@ const eventSchema = new Schema({
         type: String,
         // validate: nameValidator,
     },
+    address: {
+        type: String,
+    },
     description: {
          type: String,
          // validate: descValidator,
@@ -21,23 +24,19 @@ const eventSchema = new Schema({
     startDate: Date,
     endDate: Date,
     creator: {
-        username: {String, /*validate: creatorValidator*/},
+        username: {
+            type: String,
+            /*validate: creatorValidator*/
+        },
         dateCreated:{
             type: Date,
             // validate: createDateValidator,
         },
     },
     eventType: {
-        scope: {
-            type: String,
-            enum: ["public", "private"],
-            // validate: eventScopeValidator,
-        },
-        groupEvent: {
-            type: Boolean,
-            default: false,
-            // validate: groupEventValidator,
-        }
+        type: String,
+        enum: ["public", "private"],
+        default: "public"
     },
     numAttendees: {
         type: Number
@@ -49,7 +48,15 @@ const eventSchema = new Schema({
     expiration: {
         type: Date,
         // validate: [expirationValidator, 'Expiration date must be in the future'],
-    }
+    },
+    cover:{
+        type: String,
+    },
+    invitees: {
+        type: [String],
+        // validate: inviteesValidator need to create - must be userID
+    },
+
 });
 
 eventSchema.index({location: "2dsphere"});

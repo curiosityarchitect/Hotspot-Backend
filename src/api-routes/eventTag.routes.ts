@@ -32,7 +32,7 @@ eventTagsRouter.route('/events/:eventid/tags').post((req: Request, res: Response
     })
     .then((event) => {
         if (event == null) {
-            throw new Error("no event with specified eventid");
+            throw new Error(`no event with _id ${eventid}`);
         }
         return null;
     })
@@ -61,5 +61,37 @@ eventTagsRouter.route('/events/:eventid/tags').post((req: Request, res: Response
     // error handler for chain
     .catch(err => res.status(400).json(err));
 });
+
+eventTagsRouter.route('/events/:eventid/tags').get((req: Request, res: Response) => {
+    const eventid = req.params.eventid;
+    let errStatus = 400;
+
+    Events.findById(eventid)
+    .then((event) => {
+        if (!event) {
+            errStatus = 404;
+            throw new Error(`no event with _id ${eventid}`);
+        }
+    })
+    .then(() =>
+        EventTag.find({
+            eventid
+        }
+    ))
+    .then((tags) => res.json(tags))
+    .catch(err => res.status(errStatus).json(err));
+});
+
+
+
+eventTagsRouter.route('/events/tags/all').get((req: Request, res: Response) => {
+
+    EventTag.find()
+    .then((tags) => res.json(tags))
+    .catch(err => res.status(400).json(err));
+
+});
+
+
 
 export default eventTagsRouter;

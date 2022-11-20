@@ -12,6 +12,26 @@ const userSchema = new Schema({
         type: String,
         required: true,
         minlength: 6
+    },
+    locationKnown: {
+        type: Boolean,
+        required: true
+    },
+    location: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            default: []
+        }
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
     }
 }, {
     timestamps: true,
