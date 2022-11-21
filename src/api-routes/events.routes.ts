@@ -102,6 +102,8 @@ const locationConstraints = (req: Request) => {
     if (!req.query.longitude || !req.query.latitude || !req.query.distance) {
         return null;
     }
+
+    // return constraints based off of location
     return {
         location: {
             $near: {
@@ -146,7 +148,8 @@ const userPrivilegeConstraints = (req: Request) => {
             )
         ])
     )
-
+    
+    // return contraints based off visibility and user privilege
     .then((groupedIds) => {
             return {
                 '$or': [
@@ -159,21 +162,23 @@ const userPrivilegeConstraints = (req: Request) => {
 }
 
 eventsRouter.route('/events').get((req: Request, res: Response) => {
-
+    // gather Event query conditions based off location and user permission
     Promise.all([
         userPrivilegeConstraints(req),
         locationConstraints(req)
     ])
+    // combine constraints into single object
     .then((constraintArr) =>
         constraintArr.reduce(
             (constraintObj, constraint) => Object.assign(constraintObj, constraint),
             {}
         )
     )
+    // use constraints to query Events collection
     .then((constraints) =>
         Events.find(constraints)
     )
-
+    // respond with query results
     .then((events) =>
         res.json(events)
     )
