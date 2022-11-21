@@ -13,6 +13,10 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
     const tags: string[] = req.body.tags;
+    const startTime = req.body.startTime;
+    const endTime = req.body.endTime;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
 
     const newEvent = new Events(
     {
@@ -21,6 +25,10 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
             type: "Point",
             coordinates: [longitude, latitude]
         },
+        startTime,
+        endTime,
+        startDate,
+        endDate,
         numAttendees: req.body.numAttendees
     });
 
