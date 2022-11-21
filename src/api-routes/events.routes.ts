@@ -98,82 +98,87 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
     .catch(err => res.status(400).json(err));
 });
 
-eventsRouter.route('/events').get((req: Request, res: Response) => {
-    // if a userid is provided, then query database only for events that user should have access to
-    if (req.query.userid) {
-
-        // extract username
-        User.findById(req.query.userid)
-        .then((user) => {
-            if (!user) {
-                throw new Error();
+const locationConstraints = (req: Request) => {
+    if (!req.query.longitude || !req.query.latitude || !req.query.distance) {
+        return null;
+    }
+    return {
+        location: {
+            $near: {
+                // if a distance is defined in query string, query database for events in that distance
+                // defaults to a distance of 800 meters
+                $maxDistance: req.query.distance ? req.query.distance : 800,
+                $geometry: {
+                    type: "Point",
+                    coordinates: [req.query.longitude, req.query.latitude]
+                }
             }
-            return user.username;
-        })
+        }
+    }
+}
 
-        // gather eventids the user should have specific access to
-        .then((username) =>
-            Promise.all([
-                // query for events the user is attending
-                Attendees.find({'username': username})
-                .then((rsvps) =>
-                    rsvps.map((rsvp) => rsvp.eventid)
-                ),
+const userPrivilegeConstraints = (req: Request) => {
+    if (!req.query.userid) {
+        return null;
+    }
+    // extract username
+    return User.findById(req.query.userid)
+    .then((user) => {
+        if (!user) {
+            throw new Error();
+        }
+        return user.username;
+    })
 
-                // query for events the user owns
-                Events.find({ 'creator': { 'username': username }} )
-                .then((events) =>
-                    events.map((event) => event._id)
-                )
-            ])
-        )
+    // gather eventids the user should have specific access to
+    .then((username) =>
+        Promise.all([
+            // query for events the user is attending
+            Attendees.find({'username': username})
+            .then((rsvps) =>
+                rsvps.map((rsvp) => rsvp.eventid)
+            ),
 
-        .then((groupedIds) =>
-            Events.find({
-                $or: [
+            // query for events the user owns
+            Events.find({ 'creator': { 'username': username }} )
+            .then((events) =>
+                events.map((event) => event._id)
+            )
+        ])
+    )
+
+    .then((groupedIds) => {
+            return {
+                '$or': [
                     { 'eventType': 'public' },
                     { '_id': { $in: groupedIds.flat() }}
                 ]
-            })
-        )
-
-        .then((events) => {
-            res.json(events);
-        })
-
-        .catch((err) => {
-            res.status(400).json(err);
-        })
-
-    }
-
-    // if a location is defined in the query string, query database for events around that location
-    else if (req.query.longitude && req.query.latitude) {
-        Events.find({
-            location: {
-                $near: {
-                    // if a distance is defined in query string, query database for events in that distance
-                    // defaults to a distance of 800 meters
-                    $maxDistance: req.query.distance ? req.query.distance : 800,
-                    $geometry: {
-                        type: "Point",
-                        coordinates: [req.query.longitude, req.query.latitude]
-                    }
-                }
-            },
-            eventType: {
-                scope: "public"
             }
-        })
-        .then(event => res.json(event))
-        .catch(err => res.status(400).json(err));
-    }
-    // otherwise, fetch all events
-    else {
-        Events.find()
-            .then(events => res.json(events))
-            .catch(err => res.status(400).json(err));
-    }
+        }
+    )
+}
+
+eventsRouter.route('/events').get((req: Request, res: Response) => {
+
+    Promise.all([
+        userPrivilegeConstraints(req),
+        locationConstraints(req)
+    ])
+    .then((constraintArr) =>
+        constraintArr.reduce(
+            (constraintObj, constraint) => Object.assign(constraintObj, constraint),
+            {}
+        )
+    )
+    .then((constraints) =>
+        Events.find(constraints)
+    )
+
+    .then((events) =>
+        res.json(events)
+    )
+
+    .catch((err) => err.status(400).json(err));
 });
 
 eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
