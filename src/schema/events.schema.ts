@@ -18,8 +18,24 @@ const eventSchema = new Schema({
         },
         coordinates: [],
     },
-    startDate: Date,
-    endDate: Date,
+    // startDate: Date,
+    // endDate: Date,
+    startTime: {
+        type: String,
+        // validate: nameValidator,
+    },
+    endTime: {
+        type: String,
+        // validate: nameValidator,
+    },
+    startDate: {
+        type: String,
+        // validate: nameValidator,
+    },
+    endDate: {
+        type: String,
+        // validate: nameValidator,
+    },
     creator: {
         username: {String, /*validate: creatorValidator*/},
         dateCreated:{
