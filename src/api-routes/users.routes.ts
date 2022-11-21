@@ -59,4 +59,19 @@ userRouter.route('/users/:userId').get((req: Request, res: Response) => {
     .catch(err => res.status(400).json(err));
 });
 
+userRouter.route('/sign-in').post((req: Request, res: Response) => {
+    const username = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const newUser = new User({
+        username,
+        email,
+        password
+    });
+    newUser.save()
+    .then(() => res.json('User added'))
+    .catch(err => res.status(400).json("ERROR: user could not be found"));
+});
+
 export default userRouter;
