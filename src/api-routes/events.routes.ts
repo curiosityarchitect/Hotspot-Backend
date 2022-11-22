@@ -148,14 +148,15 @@ const userPrivilegeConstraints = (req: Request) => {
             )
         ])
     )
-    
+
     // return contraints based off visibility and user privilege
     .then((groupedIds) => {
+            const orConditions: object[] = [{ '_id': { $in: groupedIds.flat() } }];
+            if (!req.query.specific) {
+                orConditions.push({ 'eventType': 'public' });
+            }
             return {
-                '$or': [
-                    { 'eventType': 'public' },
-                    { '_id': { $in: groupedIds.flat() }}
-                ]
+                '$or': orConditions
             }
         }
     )
