@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 const eventsRouter: Router = Router();
 eventsRouter.use(bodyParser.json());
 
-eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Response) => {
+eventsRouter.route('/events').post((req: Request, res: Response) => {
     const tags: string[] = req.body.tags;
     const invitees: string[] = req.body.invitees;
     const newEvent = new Events(
@@ -33,6 +33,7 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
             startDate: req.body.startDate,
             endDate: req.body.endDate,
             cover: req.body.cover,
+            eventType: req.body.scope
         }
     );
 
