@@ -13,15 +13,15 @@ notificationRouter.route('/notifications/:recepient').get((req: Request, res: Re
 
 notificationRouter.route('/notifications').post((req: Request, res: Response) => {
 
-    const newNotification = new Notifications(
-        {
-           recepient: req.body.recepient,
-           message: req.body.message,
-           type: req.body.type,
-        });
-        newNotification.save()
-        .then(() => res.json('Notification added'))
-        .catch(err => res.status(400).json("ERROR: notification could not be added"));
+    const newNotification = new Notifications({
+        recepient: req.body.recepient,
+        message: req.body.message,
+        type: req.body.type,
+    });
+
+    newNotification.save()
+    .then(() => res.json('Notification added'))
+    .catch(err => res.status(400).json("ERROR: notification could not be added"));
 });
 
 notificationRouter.route('/notifications').delete((req: Request, res: Response) => {

@@ -194,4 +194,41 @@ eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
         .catch(err => res.status(400).json(err));
 });
 
+eventsRouter.route('/events/:eventid/arrivee').post((req:Request, res: Response) => {
+    let errStatus = 400;
+    Promise.all([
+        Events.findById(req.params.eventid)
+        .then(event => {
+            if (!event) {
+                errStatus = 404;
+                throw new Error(`no event with _id ${req.params.eventid}`);
+            }
+
+            return event;
+        }),
+
+        User.findById(req.body.arriveeId)
+        .then(user => {
+            if (!user) {
+                errStatus = 404;
+                throw new Error(`no user with _id ${req.body.arriveeId}`);
+            }
+
+            return user;
+        })
+    ])
+    .then((notificationInfo) => {
+
+        const newNotification = new Notifications({
+            recepient: notificationInfo[0].creator.username,
+            message: `${notificationInfo[1].username} has arrived at your event, ${notificationInfo[0].name}`,
+            type: "event",
+        });
+
+        return newNotification.save();
+    })
+    .then(notification => res.json(notification))
+    .catch(err => res.status(errStatus).json(err));
+})
+
 export default eventsRouter;
