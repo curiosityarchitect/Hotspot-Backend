@@ -42,7 +42,6 @@ userRouter.route('/users').post((req: Request, res: Response) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
-    const email = req.body.email;
 
     const newUser = new User({
         username,
@@ -53,7 +52,6 @@ userRouter.route('/users').post((req: Request, res: Response) => {
             type: "Point",
             coordinates: []
         },
-        email
     });
     newUser.save()
     .then(() => res.json('User added'))
@@ -66,19 +64,23 @@ userRouter.route('/users').post((req: Request, res: Response) => {
     .catch(err => res.status(400).json(err));
 });
 
-userRouter.route('/sign-in').post((req: Request, res: Response) => {
+userRouter.route('/login').post(async (req: Request, res: Response) => {
     const username = req.body.username;
-    const email = req.body.email;
     const password = req.body.password;
+    let errStatus = 400;
 
-    const newUser = new User({
+    await User.findOne({
         username,
-        email,
         password
-    });
-    newUser.save()
-    .then(() => res.json('User added'))
-    .catch(err => res.status(400).json("ERROR: user could not be found"));
+    })
+    .then((user) => {
+        if (!user) {
+            errStatus = 404;
+            throw new Error('Incorrect Credentials');
+        }
+        res.json(user)
+    })
+    .catch((err) => res.status(errStatus).json(err));
 });
 
 userRouter.route('/users/:userId/location').put((req: Request, res: Response) => {

@@ -37,10 +37,8 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
         startDate,
         endDate,
         numAttendees: req.body.numAttendees,
-            capacity: req.body.capacity,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate,
-            cover: req.body.cover,
+        capacity: req.body.capacity,
+        cover: req.body.cover,
         }
     );
 
@@ -156,7 +154,7 @@ const userPrivilegeConstraints = (req: Request) => {
             )
         ])
     )
-    
+
     // return contraints based off visibility and user privilege
     .then((groupedIds) => {
             return {
