@@ -218,14 +218,23 @@ eventsRouter.route('/events/:eventid/arrivee').post((req:Request, res: Response)
         })
     ])
     .then((notificationInfo) => {
-
-        const newNotification = new Notifications({
+        Notifications.findOne({
             recepient: notificationInfo[0].creator.username,
             message: `${notificationInfo[1].username} has arrived at your event, ${notificationInfo[0].name}`,
             type: "event",
-        });
+        })
+        .then((notification) => {
+            if (!notification) {
+                const newNotification = new Notifications({
+                    recepient: notificationInfo[0].creator.username,
+                    message: `${notificationInfo[1].username} has arrived at your event, ${notificationInfo[0].name}`,
+                    type: "event",
+                });
 
-        return newNotification.save();
+                return newNotification.save();
+            }
+            return notification;
+        })
     })
     .then(notification => res.json(notification))
     .catch(err => res.status(errStatus).json(err));

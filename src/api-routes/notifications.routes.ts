@@ -12,12 +12,6 @@ notificationRouter.route('/notifications/:recepient').get((req: Request, res: Re
 
 
 notificationRouter.route('/notifications').post((req: Request, res: Response) => {
-
-    const newNotification = new Notifications({
-        recepient: req.body.recepient,
-        message: req.body.message,
-        type: req.body.type,
-    });
     Notifications.findOne({
         recepient: req.body.recepient,
         message: req.body.message,
@@ -25,6 +19,11 @@ notificationRouter.route('/notifications').post((req: Request, res: Response) =>
     })
     .then(notification => {
         if (!notification) {
+            const newNotification = new Notifications({
+                recepient: req.body.recepient,
+                message: req.body.message,
+                type: req.body.type,
+            });
             return newNotification.save()
         }
         return notification;
