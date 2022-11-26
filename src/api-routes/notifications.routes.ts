@@ -18,8 +18,17 @@ notificationRouter.route('/notifications').post((req: Request, res: Response) =>
         message: req.body.message,
         type: req.body.type,
     });
-
-    newNotification.save()
+    Notifications.findOne({
+        recepient: req.body.recepient,
+        message: req.body.message,
+        type: req.body.type,
+    })
+    .then(notification => {
+        if (!notification) {
+            return newNotification.save()
+        }
+        return notification;
+    })
     .then(() => res.json('Notification added'))
     .catch(err => res.status(400).json("ERROR: notification could not be added"));
 });

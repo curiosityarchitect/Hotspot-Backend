@@ -56,7 +56,7 @@ RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Respo
     .then((eventidObjects) =>
         eventidObjects.map((eventidObject) => eventidObject.eventid)
     )
-    .then((eventids) => 
+    .then((eventids) =>
         Events.find({
             '_id': { $in: eventids }
         })
