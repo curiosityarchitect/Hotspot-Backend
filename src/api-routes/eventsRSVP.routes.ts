@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { Attendees } from "../schema/rsvp.schema"
 import { Events } from "../schema/events.schema"
 import bodyParser from "body-parser";
+import { User } from "../schema/user.schema";
 
 const RsvpRouter: Router = Router();
 RsvpRouter.use(bodyParser.json());
@@ -35,7 +36,33 @@ RsvpRouter.route('/events/:eventid/attendees').get((req: Request, res: Response)
     Attendees.find({ eventid })
         .then((rsvp) => res.json(rsvp))
         .catch(err => res.status(400).json(err));
+});
 
+RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Response) => {
+    let errStatus = 400;
+
+    User.findById(req.params.userid)
+    .then((user) => {
+        if (!user) {
+            errStatus = 404;
+            throw new Error(`no user with _id ${req.params.userid}`);
+        }
+        return user.username;
+    })
+    .then((username) =>
+        Attendees.find({ username })
+        .select(['eventid'])
+    )
+    .then((eventidObjects) =>
+        eventidObjects.map((eventidObject) => eventidObject.eventid)
+    )
+    .then((eventids) =>
+        Events.find({
+            '_id': { $in: eventids }
+        })
+    )
+    .then((events) => res.json(events))
+    .catch(err => res.status(errStatus).json(err));
 });
 
 export default RsvpRouter;

@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 const eventsRouter: Router = Router();
 eventsRouter.use(bodyParser.json());
 
-eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Response) => {
+eventsRouter.route('/events').post((req: Request, res: Response) => {
     const tags: string[] = req.body.tags;
     const startTime = req.body.startTime;
     const endTime = req.body.endTime;
@@ -39,6 +39,7 @@ eventsRouter.route('/events').post(validateEventPost, (req: Request, res: Respon
         numAttendees: req.body.numAttendees,
         capacity: req.body.capacity,
         cover: req.body.cover,
+            eventType: req.body.scope
         }
     );
 
@@ -157,11 +158,12 @@ const userPrivilegeConstraints = (req: Request) => {
 
     // return contraints based off visibility and user privilege
     .then((groupedIds) => {
+            const orConditions: object[] = [{ '_id': { $in: groupedIds.flat() } }];
+            if (!req.query.specific) {
+                orConditions.push({ 'eventType': 'public' });
+            }
             return {
-                '$or': [
-                    { 'eventType': 'public' },
-                    { '_id': { $in: groupedIds.flat() }}
-                ]
+                '$or': orConditions
             }
         }
     )
@@ -197,5 +199,51 @@ eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
         .then(event => res.json(event))
         .catch(err => res.status(400).json(err));
 });
+
+eventsRouter.route('/events/:eventid/arrivee').post((req:Request, res: Response) => {
+    let errStatus = 400;
+    Promise.all([
+        Events.findById(req.params.eventid)
+        .then(event => {
+            if (!event) {
+                errStatus = 404;
+                throw new Error(`no event with _id ${req.params.eventid}`);
+            }
+
+            return event;
+        }),
+
+        User.findById(req.body.arriveeId)
+        .then(user => {
+            if (!user) {
+                errStatus = 404;
+                throw new Error(`no user with _id ${req.body.arriveeId}`);
+            }
+
+            return user;
+        })
+    ])
+    .then((notificationInfo) => {
+        Notifications.findOne({
+            recepient: notificationInfo[0].creator.username,
+            message: `${notificationInfo[1].username} has arrived at your event, ${notificationInfo[0].name}`,
+            type: "event",
+        })
+        .then((notification) => {
+            if (!notification) {
+                const newNotification = new Notifications({
+                    recepient: notificationInfo[0].creator.username,
+                    message: `${notificationInfo[1].username} has arrived at your event, ${notificationInfo[0].name}`,
+                    type: "event",
+                });
+
+                return newNotification.save();
+            }
+            return notification;
+        })
+    })
+    .then(notification => res.json(notification))
+    .catch(err => res.status(errStatus).json(err));
+})
 
 export default eventsRouter;
