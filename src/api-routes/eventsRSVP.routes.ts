@@ -51,8 +51,17 @@ RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Respo
     })
     .then((username) =>
         Attendees.find({ username })
+        .select(['eventid'])
     )
-    .then((rsvps) => res.json(rsvps))
+    .then((eventidObjects) =>
+        eventidObjects.map((eventidObject) => eventidObject.eventid)
+    )
+    .then((eventids) => 
+        Events.find({
+            '_id': { $in: eventids }
+        })
+    )
+    .then((events) => res.json(events))
     .catch(err => res.status(errStatus).json(err));
 });
 
