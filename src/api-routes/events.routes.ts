@@ -33,6 +33,7 @@ eventsRouter.route('/events').post((req: Request, res: Response) => {
             startDate: req.body.startDate,
             endDate: req.body.endDate,
             cover: req.body.cover,
+            invitees: req.body.invitees,
             eventType: req.body.scope
         }
     );
