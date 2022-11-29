@@ -11,6 +11,7 @@ const eventSchema = new Schema({
     },
     description: {
          type: String,
+         default: ""
          // validate: descValidator,
     },
     location: {
