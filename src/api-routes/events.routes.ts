@@ -35,6 +35,7 @@ eventsRouter.route('/events').post((req: Request, res: Response) => {
             numAttendees: req.body.numAttendees,
             capacity: req.body.capacity,
             cover: req.body.cover,
+            invitees: req.body.invitees,
             eventType: req.body.scope
         }
     );
