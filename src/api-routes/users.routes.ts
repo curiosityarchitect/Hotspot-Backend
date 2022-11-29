@@ -73,12 +73,13 @@ userRouter.route('/login').post(async (req: Request, res: Response) => {
         username,
         password
     })
+    .select(['username'])
     .then((user) => {
         if (!user) {
             errStatus = 404;
             throw new Error('Incorrect Credentials');
         }
-        res.json(user)
+        res.json(user);
     })
     .catch((err) => res.status(errStatus).json(err));
 });

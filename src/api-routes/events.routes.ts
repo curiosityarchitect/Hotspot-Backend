@@ -33,12 +33,12 @@ eventsRouter.route('/events').post((req: Request, res: Response) => {
                 username: req.body.username,
             },
             startTime,
-        endTime,
-        startDate,
-        endDate,
-        numAttendees: req.body.numAttendees,
-        capacity: req.body.capacity,
-        cover: req.body.cover,
+            endTime,
+            startDate,
+            endDate,
+            numAttendees: req.body.numAttendees,
+            capacity: req.body.capacity,
+            cover: req.body.cover,
             eventType: req.body.scope
         }
     );
