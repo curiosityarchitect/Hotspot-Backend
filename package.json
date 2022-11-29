@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/CS307-Team-24/Hotspot-Backend#readme",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.10",
+    "@react-native-community/async-storage": "^1.12.1",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -29,6 +31,7 @@
     "eslint-plugin-react-native": "^4.0.0",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
+    "jwt-decode": "^3.1.2",
     "mongoose": "^6.6.3",
     "mongoose-validator": "^2.1.0",
     "prettier": "^2.7.1"
