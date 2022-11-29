@@ -15,8 +15,6 @@ eventsRouter.use(bodyParser.json());
 
 eventsRouter.route('/events').post((req: Request, res: Response) => {
     const tags: string[] = req.body.tags;
-    const startTime = req.body.startTime;
-    const endTime = req.body.endTime;
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
     const invitees: string[] = req.body.invitees;
@@ -32,8 +30,6 @@ eventsRouter.route('/events').post((req: Request, res: Response) => {
             creator: {
                 username: req.body.username,
             },
-            startTime,
-            endTime,
             startDate,
             endDate,
             numAttendees: req.body.numAttendees,
