@@ -6,9 +6,9 @@ const eventSchema = new Schema({
         type: String,
         // validate: nameValidator,
     },
-    address: {
+   /*  address: {
         type: String,
-    },
+    }, */ // until we find a method to generate string addresses from lat/long coordinates, we will cease to use this field
     description: {
          type: String,
          default: ""

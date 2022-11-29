@@ -21,7 +21,7 @@ eventsRouter.route('/events').post((req: Request, res: Response) => {
     const newEvent = new Events(
         {
             name: req.body.name,
-            address: req.body.address,
+            // address: req.body.address,
             description: req.body.description,
             location: {
                 type: "Point",
