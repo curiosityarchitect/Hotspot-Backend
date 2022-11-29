@@ -21,24 +21,8 @@ const eventSchema = new Schema({
         },
         coordinates: [],
     },
-    // startDate: Date,
-    // endDate: Date,
-    startTime: {
-        type: String,
-        // validate: nameValidator,
-    },
-    endTime: {
-        type: String,
-        // validate: nameValidator,
-    },
-    startDate: {
-        type: String,
-        // validate: nameValidator,
-    },
-    endDate: {
-        type: String,
-        // validate: nameValidator,
-    },
+    startDate: Date,
+    endDate: Date,
     creator: {
         username: {
             type: String,
