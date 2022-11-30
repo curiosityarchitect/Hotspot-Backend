@@ -16,29 +16,40 @@ eventsRouter.use(bodyParser.json());
 eventsRouter.route('/events').post((req: Request, res: Response) => {
     const tags: string[] = req.body.tags;
     const invitees: string[] = req.body.invitees;
-    const newEvent = new Events(
-        {
-            name: req.body.name,
-            // address: req.body.address,
-            description: req.body.description,
-            location: {
-                type: "Point",
-                coordinates: [req.body.longitude, req.body.latitude]
-            },
-            creator: {
-                username: req.body.username,
-            },
-            numAttendees: req.body.numAttendees,
-            capacity: req.body.capacity,
-            startDate: req.body.startDate,
-            endDate: req.body.endDate,
-            cover: req.body.cover,
-            invitees: req.body.invitees,
-            eventType: req.body.scope
-        }
-    );
-
-    newEvent.save()
+    let inviteeArr: string[];
+      // validate invitees
+      if (!invitees) {
+        inviteeArr = [];
+      } else {
+        inviteeArr = invitees
+      }
+    User.find({ username: { $in: invitees } })
+    .then((users) =>
+        users.map(user => user.username)
+    ).then((usernames) => {
+        return usernames;
+    }).then((validatedInvitees) => {
+        const newEvent = new Events(
+            {
+                name: req.body.name,
+                description: req.body.description,
+                location: {
+                    type: "Point",
+                    coordinates: [req.body.longitude, req.body.latitude]
+                },
+                creator: {
+                    username: req.body.username,
+                },
+                numAttendees: req.body.numAttendees,
+                capacity: req.body.capacity,
+                startDate: req.body.startDate,
+                endDate: req.body.endDate,
+                cover: req.body.cover,
+                invitees: validatedInvitees,
+                eventType: req.body.scope
+            });
+            return newEvent.save()
+    })
     .then(event => {
         // simply respond with event document if no tags need to be added
         if (!tags ) {
