@@ -145,6 +145,11 @@ const userPrivilegeConstraints = (req: Request) => {
                 rsvps.map((rsvp) => rsvp.eventid)
             ),
 
+            Events.find({ invitees : { $all: [username] }})
+            .then((events) =>
+                events.map((event) => event._id)
+            ),
+
             // query for events the user owns
             Events.find({ 'creator': { 'username': username }} )
             .then((events) =>
