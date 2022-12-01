@@ -228,7 +228,7 @@ eventsRouter.route('/events').get((req: Request, res: Response) => {
         res.json(events)
     )
 
-    .catch((err) => err.status(400).json(err));
+    .catch((err) => res.status(400).json(err));
 });
 
 eventsRouter.route('/events/:eventid').get((req: Request, res: Response) => {
