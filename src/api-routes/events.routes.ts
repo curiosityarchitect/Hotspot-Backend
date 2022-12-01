@@ -195,12 +195,11 @@ eventsRouter.route('/events/:username').get((req: Request, res: Response) => {
 eventsRouter.route('/events/:username/count').get((req: Request, res: Response) => {
     const username = req.params.username;
     Promise.all([
-        Attendees.find({'username': username}),
-        Events.find({ invitees : { $all: [username] }}),
-        Events.find({ 'creator': { 'username': username }})
-    ]).then((combineQuery) => {
-        const [query1,query2,query3] = combineQuery;
-        const eventCount = query1.length + query2.length + query3.length;
+        Attendees.find({'username': username}).then((attendees) => attendees.map((attendee) => attendee.eventid)),
+        Events.find({ invitees : { $all: [username] }}).then((events) => events.map((event) => event._id)),
+        Events.find({ 'creator': { 'username': username }}).then((events) => events.map((event) => event._id))
+    ]).then((eventids) => {
+        const eventCount = eventids.flat().filter((eventid, index, self) => self.indexOf(eventid) === index).length;
         res.json(eventCount);
     })
     .catch(err => res.status(400).json(err));

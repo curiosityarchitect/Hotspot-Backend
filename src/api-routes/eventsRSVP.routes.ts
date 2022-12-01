@@ -3,6 +3,7 @@ import { Attendees } from "../schema/rsvp.schema"
 import { Events } from "../schema/events.schema"
 import bodyParser from "body-parser";
 import { User } from "../schema/user.schema";
+import {Notifications} from "../schema/notification.schema";
 
 const RsvpRouter: Router = Router();
 RsvpRouter.use(bodyParser.json());
@@ -37,6 +38,14 @@ RsvpRouter.route('/events/:eventid/attendees').post((req: Request, res: Response
                     }
                 );
                     return newAttendee.save();
+        }
+        ).then(() => {
+            const newNotification = new Notifications({
+                recepient: event.creator.username,
+                message: `${req.body.username} has RSVP'd to your event, ${event.name}`,
+                type: "event",
+            });
+            return newNotification.save();
         }
         )
         .then((attendee) => res.json(attendee))
@@ -91,7 +100,13 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
         }
         )
         .then(() => {
-            res.json({message: "unrsvp successful"});
+            const newNotification = new Notifications({
+                recepient: event.creator.username,
+                message: `${req.body.username} has removed their RSVP'd to your event, ${event.name}`,
+                type: "event",
+            });
+            return newNotification.save();
+
         }
         )
         .catch(err => res.status(400).json(err));

@@ -34,7 +34,7 @@ notificationRouter.route('/notifications').post((req: Request, res: Response) =>
 
 notificationRouter.route('/notifications/:username').delete((req: Request, res: Response) => {
     Notifications.findOneAndDelete({
-        recepient: req.params.recepient,
+        recepient: req.params.username,
     })
         .then(() => res.json('Notifications cleared'))
         .catch(err => res.status(400).json("ERROR: notifications could not be cleared"));
