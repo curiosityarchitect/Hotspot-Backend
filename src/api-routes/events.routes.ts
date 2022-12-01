@@ -183,7 +183,7 @@ const userPrivilegeConstraints = (req: Request) => {
     )
 }
 // specifically user created events for profile page display
-eventsRouter.route('/events/:username').get((req: Request, res: Response) => {
+eventsRouter.route('/profile-events/:username').get((req: Request, res: Response) => {
     const username = req.params.username;
     Events.find({ 'creator': { 'username': username }})
     .then((events) => {
@@ -191,6 +191,7 @@ eventsRouter.route('/events/:username').get((req: Request, res: Response) => {
     })
     .catch(err => res.status(400).json(err));
 });
+
 // event count for profile page
 eventsRouter.route('/events/:username/count').get((req: Request, res: Response) => {
     const username = req.params.username;
