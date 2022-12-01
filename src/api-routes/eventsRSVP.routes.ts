@@ -65,8 +65,17 @@ RsvpRouter.route('/events/:eventid/:username').get((req: Request, res: Response)
 // unrsvp
 RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Response) => {
     const username = req.params.username;
-    const eventId = req.params.eventid;
-    return Events.findById(eventId)
+    const eventid = req.params.eventid;
+    Promise.all([
+        Attendees.updateMany({ eventid}, {$inc: {numAttendees: - 1}}),
+        Attendees.findOneAndRemove({ eventid, username }),
+    ])
+        .then((rsvp) => {
+            if (!rsvp) {
+                throw new Error(`no rsvp with username ${username} and eventid ${eventid}`);
+            }
+        })
+    return Events.findById(eventid)
     .then((event) => {
         if (!event) {
             throw new Error();
@@ -74,12 +83,10 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
         return event;
     }).then((event) => {
         const attending = event.numAttendees - 1;
-        Attendees.findOneAndDelete({ eventId, username })
-
-        Events.findByIdAndUpdate({_id: eventId}, { numAttendees: 1 })
+        Events.findByIdAndUpdate({_id: eventid}, { numAttendees: attending })
         .then((reservation) => {
             if (!reservation) {
-                throw new Error(`no event with id ${eventId}`);
+                throw new Error(`no event with id ${eventid}`);
             }
         }
         )
@@ -90,9 +97,6 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
         .catch(err => res.status(400).json(err));
     }
     )
-
-
-
 });
 
 RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Response) => {
@@ -122,4 +126,6 @@ RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Respo
     .catch(err => res.status(errStatus).json(err));
 });
 
+
 export default RsvpRouter;
+

@@ -284,4 +284,16 @@ eventsRouter.route('/events/:eventid/arrivee').post((req:Request, res: Response)
     .catch(err => res.status(errStatus).json(err));
 })
 
+// number of attendees for event
+eventsRouter.route('/events/:eventid/attendees/count').get((req: Request, res: Response) => {
+    const eventid=req.params.eventid;
+    Events.findById({_id: eventid}).select('numAttendees')
+    .then((attendees) => {
+        res.json(attendees.numAttendees);
+    })
+    .catch(err => res.status(400).json(err));
+});
+
+
+
 export default eventsRouter;
