@@ -8,7 +8,7 @@ const friendRequestRouter: Router = Router();
 
 friendRequestRouter.route('/friend-requests').post((req: Request, res: Response) => {
     const reciever = req.body.reciever;
-    const deliverer = req.body.deliverer;
+    const deliverer = req.body.deliverer; // current user of the app
     const newRequest = new friendRequest ({
         reciever,
         deliverer

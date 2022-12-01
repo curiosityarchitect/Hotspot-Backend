@@ -15,6 +15,8 @@ eventsRouter.use(bodyParser.json());
 
 eventsRouter.route('/events').post((req: Request, res: Response) => {
     const tags: string[] = req.body.tags;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
     const invitees: string[] = req.body.invitees;
     let inviteeArr: string[];
       // validate invitees
@@ -147,11 +149,17 @@ const userPrivilegeConstraints = (req: Request) => {
 
     // gather eventids the user should have specific access to
     .then((username) =>
+
         Promise.all([
             // query for events the user is attending
             Attendees.find({'username': username})
             .then((rsvps) =>
                 rsvps.map((rsvp) => rsvp.eventid)
+            ),
+            // query for events the user is invited to
+            Events.find({ invitees : { $all: [username] }})
+            .then((events) =>
+                events.map((event) => event._id)
             ),
 
             // query for events the user owns
@@ -174,6 +182,30 @@ const userPrivilegeConstraints = (req: Request) => {
         }
     )
 }
+// specifically user created events for profile page display
+eventsRouter.route('/events/:username').get((req: Request, res: Response) => {
+    const username = req.params.username;
+    Events.find({ 'creator': { 'username': username }})
+    .then((events) => {
+        res.json(events);
+    })
+    .catch(err => res.status(400).json(err));
+});
+// event count for profile page
+eventsRouter.route('/events/:username/count').get((req: Request, res: Response) => {
+    const username = req.params.username;
+    Promise.all([
+        Attendees.find({'username': username}),
+        Events.find({ invitees : { $all: [username] }}),
+        Events.find({ 'creator': { 'username': username }})
+    ]).then((combineQuery) => {
+        const [query1,query2,query3] = combineQuery;
+        const eventCount = query1.length + query2.length + query3.length;
+        res.json(eventCount);
+    })
+    .catch(err => res.status(400).json(err));
+});
+
 
 eventsRouter.route('/events').get((req: Request, res: Response) => {
     // gather Event query conditions based off location and user permission

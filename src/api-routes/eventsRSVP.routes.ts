@@ -8,34 +8,91 @@ const RsvpRouter: Router = Router();
 RsvpRouter.use(bodyParser.json());
 
 RsvpRouter.route('/events/:eventid/attendees').post((req: Request, res: Response) => {
-
-    const newAttendee = new Attendees(
-        {
-            username: req.body.username,
-            eventid: req.params.eventid,
-            numAttendees: req.body.numAttendees,
+    const eventId = req.params.eventid
+    return Events.findById(eventId)
+    .then((event) => {
+        if (!event) {
+            throw new Error();
         }
-    );
-
-    newAttendee.save()
-    .then(rsvp => res.json(rsvp))
-    .then(() => {
-        const newNumAttendees = req.body.numAttendees + 1;
-        if (req.params.numAttendees < req.params.capacity){
-            return Events.findOneAndUpdate({ _id: req.params.eventid }, { $set: { numAttendees: newNumAttendees } }, { new: true })
+        return event;
+    }).then((event) => {
+        const attending = event.numAttendees + 1;
+        const capacity = event.capacity;
+        if (event.numAttendees >= capacity) {
+            throw new Error("Event is full");
         }
-        else {
-            throw new Error("Event is at max capacity");
+        else{
+            Events.findOneAndUpdate({_id: eventId}, {numAttendees: attending})
+            .then((reservation) => {
+                if (!reservation) {
+                    throw new Error(`no event with id ${eventId}`);
+                }
+            })
+            .then(() => {
+                const newAttendee = new Attendees(
+                    {
+                        username: req.body.username,
+                        eventid: req.params.eventid,
+                        numAttendees: attending,
+                    }
+                );
+                    return newAttendee.save();
         }
+        )
+        .then((attendee) => res.json(attendee))
+        .catch(err => res.status(400).json(err));
+    }
     })
-    .catch(err => res.status(400).json(err));
 });
 
+// query by eventid
 RsvpRouter.route('/events/:eventid/attendees').get((req: Request, res: Response) => {
     const eventid = req.params.eventid;
     Attendees.find({ eventid })
         .then((rsvp) => res.json(rsvp))
         .catch(err => res.status(400).json(err));
+});
+
+// query by username
+RsvpRouter.route('/events/:eventid/:username').get((req: Request, res: Response) => {
+    const username = req.params.username;
+    const eventid = req.params.eventid;
+    Attendees.find({ eventid, username })
+        .then((rsvp) => res.json(rsvp))
+        .catch(err => res.status(400).json(err));
+});
+
+// unrsvp
+RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Response) => {
+    const username = req.params.username;
+    const eventId = req.params.eventid;
+    return Events.findById(eventId)
+    .then((event) => {
+        if (!event) {
+            throw new Error();
+        }
+        return event;
+    }).then((event) => {
+        const attending = event.numAttendees - 1;
+        Attendees.findOneAndDelete({ eventId, username })
+
+        Events.findByIdAndUpdate({_id: eventId}, { numAttendees: 1 })
+        .then((reservation) => {
+            if (!reservation) {
+                throw new Error(`no event with id ${eventId}`);
+            }
+        }
+        )
+        .then(() => {
+            res.json({message: "unrsvp successful"});
+        }
+        )
+        .catch(err => res.status(400).json(err));
+    }
+    )
+
+
+
 });
 
 RsvpRouter.route('/user/:userid/events/attending').get((req: Request, res: Response) => {

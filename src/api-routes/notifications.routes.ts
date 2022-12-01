@@ -32,8 +32,10 @@ notificationRouter.route('/notifications').post((req: Request, res: Response) =>
     .catch(err => res.status(400).json("ERROR: notification could not be added"));
 });
 
-notificationRouter.route('/notifications').delete((req: Request, res: Response) => {
-    Notifications.deleteMany({})
+notificationRouter.route('/notifications/:username').delete((req: Request, res: Response) => {
+    Notifications.findOneAndDelete({
+        recepient: req.params.recepient,
+    })
         .then(() => res.json('Notifications cleared'))
         .catch(err => res.status(400).json("ERROR: notifications could not be cleared"));
 });

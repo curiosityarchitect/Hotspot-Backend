@@ -73,12 +73,13 @@ userRouter.route('/login').post(async (req: Request, res: Response) => {
         username,
         password
     })
+    .select(['username'])
     .then((user) => {
         if (!user) {
             errStatus = 404;
             throw new Error('Incorrect Credentials');
         }
-        res.json(user)
+        res.json(user);
     })
     .catch((err) => res.status(errStatus).json(err));
 });
@@ -117,5 +118,15 @@ userRouter.route('/users/username/:username').get((req: Request, res: Response) 
     )
     .catch(err => res.status(400).json(err));
 });
+
+userRouter.route('/users/:userId').put((req: Request, res: Response) => {
+    const username = req.body.username;
+    const userId = req.params.userId;
+    User.findByIdAndUpdate(userId, {username})
+    .then(user => res.json(user))
+    .catch(err => res.status(400).json(err));
+});
+
+
 
 export default userRouter;
