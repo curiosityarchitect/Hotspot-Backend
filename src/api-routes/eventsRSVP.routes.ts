@@ -103,7 +103,7 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
         .then(() => {
             const newNotification = new Notifications({
                 recepient: event.creator.username,
-                message: `${req.body.username} has removed their RSVP'd to your event, ${event.name}`,
+                message: `${req.params.username} has removed their RSVP'd to your event, ${event.name}`,
                 type: "event",
             });
             newNotification.save();
