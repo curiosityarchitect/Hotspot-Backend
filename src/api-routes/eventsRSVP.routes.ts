@@ -79,12 +79,13 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
         Attendees.updateMany({ eventid}, {$inc: {numAttendees: - 1}}),
         Attendees.findOneAndRemove({ eventid, username }),
     ])
-        .then((rsvp) => {
-            if (!rsvp) {
-                throw new Error(`no rsvp with username ${username} and eventid ${eventid}`);
-            }
-        })
-    return Events.findById(eventid)
+    .then((rsvp) => {
+        if (!rsvp) {
+            throw new Error(`no rsvp with username ${username} and eventid ${eventid}`);
+        }
+        res.json("Successfully cancelled RSVP");
+    })
+    Events.findById(eventid)
     .then((event) => {
         if (!event) {
             throw new Error();
@@ -105,10 +106,8 @@ RsvpRouter.route('/events/:eventid/:username').delete((req: Request, res: Respon
                 message: `${req.body.username} has removed their RSVP'd to your event, ${event.name}`,
                 type: "event",
             });
-            return newNotification.save();
-
-        }
-        )
+            newNotification.save();
+        })
         .catch(err => res.status(400).json(err));
     }
     )
