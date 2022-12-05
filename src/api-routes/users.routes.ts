@@ -54,7 +54,7 @@ userRouter.route('/users').post((req: Request, res: Response) => {
         },
     });
     newUser.save()
-    .then(() => res.json('User added'))
+    .then((user) => res.json(user))
     .catch(err => res.status(400).json("ERROR: user could not be added"));
 });
 
