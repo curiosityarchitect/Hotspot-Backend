@@ -33,7 +33,7 @@ notificationRouter.route('/notifications').post((req: Request, res: Response) =>
 });
 
 notificationRouter.route('/notifications/:username').delete((req: Request, res: Response) => {
-    Notifications.findOneAndDelete({
+    Notifications.deleteMany({
         recepient: req.params.username,
     })
         .then(() => res.json('Notifications cleared'))
